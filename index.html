@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beat Paths</title>
+    <meta charset="UTF-8">
+    <script src="./go.js"></script>
+    <script type="text/javascript">
+        function init() {
+            var GoMarker = go.GraphObject.make,
+	            myDiagram,
+                TYPE={
+            	    LOAD_BALANCING:'loadBalancing',
+                    NETGATE:'netgate',
+                    PLATFORM:'platform',
+                    SERVER:'server'
+                },
+                TYPE_COLOR={
+	                loadBalancing:'#f1f1f2',
+	                netgate:'#3CE1FF',
+	                platform:'#0066FF'
+                },
+                //节点信息
+	            linkDataArray = [
+		            {from: "loadBalancing1", to: "A1"},
+		            {from: "loadBalancing1", to: "A2"},
+		            {from: "loadBalancing1", to: "A3"},
+
+                    {from: "A1", to: "loadBalancing2"},
+		            {from: "A2", to: "loadBalancing2"},
+		            {from: "A3", to: "loadBalancing2"},
+
+                    {from: "loadBalancing2", to: "B1"},
+		            {from: "loadBalancing2", to: "B2"},
+		            {from: "loadBalancing2", to: "B3"},
+
+                    {from: "B1", to: "platform1"},
+		            {from: "B2", to: "platform2"},
+		            {from: "B3", to: "platform3"},
+
+		            {from: "platform3", to: "file1"},
+		            {from: "platform2", to: "file1"},
+
+		            {from: "file1", to: "C1"},
+		            {from: "file2", to: "C1"},
+
+		            {from: "file1", to: "C2"},
+		            {from: "file2", to: "C2"},
+
+		            {from: "C1", to: "C2"},
+		            {from: "C2", to: "C1"},
+
+		            {from: "platform1", to: "D1"},
+		            {from: "platform2", to: "D1"},
+		            {from: "platform3", to: "D1"},
+
+		            {from: "platform1", to: "Z1"},
+		            {from: "platform2", to: "Z1"},
+		            {from: "platform3", to: "Z1"},
+
+		            {from: "platform1", to: "Z2"},
+		            {from: "platform2", to: "Z2"},
+		            {from: "platform3", to: "Z2"},
+
+		            {from: "platform1", to: "Z3"},
+		            {from: "platform2", to: "Z3"},
+		            {from: "platform3", to: "Z3"},
+
+		            {from: "platform1", to: "Z4"},
+		            {from: "platform2", to: "Z4"},
+		            {from: "platform3", to: "Z4"}
+	            ],
+                linKDataMap={
+            	    loadBalancing1:{
+		                desp:'F5负载均衡',
+                        type:TYPE.LOAD_BALANCING
+                    },
+                    A1:{
+            	    	desp:'172.50.2.124',
+                        type:TYPE.NETGATE,
+                        children:[{
+            	    		desp:'交易版1000',
+                            type:'button'
+                        },{
+            	    		desp:'查询版800'
+                        }]
+                    },
+                    A2:{
+            	    	desp:'172.50.2.122',
+	                    type:TYPE.NETGATE,
+                        children:[{
+            	    		desp:'交易版1000'
+                        },{
+            	    		desp:'查询版800'
+                        }]
+                    },
+                    A3:{
+            	    	desp:'172.50.2.123',
+	                    type:TYPE.NETGATE,
+                        children:[{
+            	    		desp:'交易版1000'
+                        },{
+            	    		desp:'查询版800'
+                        }]
+                    },
+	                loadBalancing2:{
+		                desp:'F5负载均衡',
+		                type:TYPE.LOAD_BALANCING
+	                },
+	                B1:{
+		                desp:'172.50.5.151',
+		                type:TYPE.NETGATE,
+		                children:[{
+			                desp:'多企业操作'
+		                }]
+	                },
+	                B2:{
+		                desp:'172.50.5.152',
+		                type:TYPE.NETGATE,
+		                children:[{
+			                desp:'多企业操作'
+		                }]
+	                },
+	                B3:{
+		                desp:'172.50.5.153',
+		                type:TYPE.NETGATE,
+		                children:[{
+			                desp:'多企业操作'
+		                }]
+	                },
+	                platform1:{
+		                desp:'172.50.5.156',
+		                type:TYPE.PLATFORM,
+		                children:[{
+			                desp:'对公平台A003'
+		                }]
+	                },
+	                platform2:{
+		                desp:'172.50.5.154',
+		                type:TYPE.PLATFORM,
+		                children:[{
+			                desp:'对公平台A003'
+		                }]
+	                },
+	                platform3:{
+		                desp:'172.50.5.155',
+		                type:TYPE.PLATFORM,
+		                children:[{
+			                desp:'对公平台A003'
+		                }]
+	                },
+	                file1:{
+		                desp:'172.50.5.152',
+		                type:TYPE.SERVER,
+		                children:[{
+			                desp:'文件服务F001'
+		                }]
+	                },
+	                file2:{
+		                desp:'172.50.5.153',
+		                type:TYPE.SERVER,
+		                children:[{
+			                desp:'文件服务F002'
+		                }]
+	                },
+
+	                C1:{
+		                desp:'172.50.5.157',
+		                type:TYPE.SERVER,
+		                children:[{
+			                desp:'文件存储1111'
+		                }]
+	                },
+	                C2:{
+		                desp:'172.50.5.158',
+		                type:TYPE.SERVER,
+		                children:[{
+			                desp:'文件存储222'
+		                }]
+	                },
+	                D1:{
+		                desp:'194.1.2.8',
+		                type:TYPE.SERVER,
+		                children:[{
+			                desp:'数据库K3800'
+		                }]
+	                },
+
+
+	                Z1:{
+		                desp:'198.10.1.22\n198.10.1.13\n198.10.1.14',
+		                type:TYPE.SERVER,
+		                children:[{
+			                desp:'综合10010'
+		                }]
+	                },
+
+	                Z2:{
+		                desp:'172.30.5.120',
+		                type:TYPE.SERVER,
+		                children:[{
+			                desp:'签名服务S001'
+		                }]
+	                },
+
+	                Z3:{
+		                desp:'172.50.5.190',
+		                type:TYPE.SERVER,
+		                children:[{
+			                desp:'FA服务2040'
+		                }]
+	                },
+
+	                Z4:{
+		                desp:'172.50.5.72',
+		                type:TYPE.SERVER,
+		                children:[{
+			                desp:'加速器4516'
+		                }]
+	                }
+                },
+	            convertKeyImage=function(key) {
+		            return './img/'+ (linKDataMap[key].type || TYPE.NETGATE) +'.png';
+	            },
+	            convertKeyDesp=function(key){
+            	    return linKDataMap[key].desp;
+                },
+	            convertKeyDetails=function(key){
+	            	var content='',
+                        i,item,items;
+
+	            	if((item=linKDataMap[key])&&(items=item.children)&&items.length) {
+			            for (i = -1, content = []; item = items[++i];) {
+				            content.push('\t\t' + item.desp + '\t\t');
+			            }
+			            content = '\n' + content.join('\n\n')+'\n';
+		            }
+	            	return content;
+                },
+	            convertKeyColor=function (key) {
+		            return  TYPE_COLOR[(linKDataMap[key].type || TYPE.NETGATE)];
+	            };
+
+
+
+
+            //初始化
+	        myDiagram = GoMarker(go.Diagram,
+		        "ctt",//填充内容div的ID
+		        { // automatically scale the diagram to fit the viewport's size
+			        initialAutoScale: go.Diagram.Uniform,
+			        // start everything in the middle of the viewport
+			        initialContentAlignment: go.Spot.Center,
+			        // disable user copying of parts
+			        allowCopy: false,
+			        // position all of the nodes and route all of the links
+			        layout: GoMarker(go.LayeredDigraphLayout, {
+				        direction: 90,
+				        layerSpacing: 10,
+				        columnSpacing: 15,
+				        setsPortSpots: false
+			        })
+		        });
+
+            // replace the default Node template in the nodeTemplateMap
+            myDiagram.nodeTemplate =
+                GoMarker(
+                	go.Node,
+                    "Vertical",  // the whole node panel
+                    GoMarker(
+                    	go.Picture,
+                        //图片大小
+                        {desiredSize: new go.Size(75, 75)},
+                        new go.Binding("source", "key", convertKeyImage)),
+                    GoMarker(
+		                go.TextBlock,  // the text label
+		                new go.Binding("text", "key",convertKeyDesp)),
+
+	                GoMarker(go.Panel,
+                        "Vertical",
+		                { background: '#f1f1f2',margin:10,width:200},
+		                GoMarker(
+			                go.TextBlock,  // the text label
+			                new go.Binding("text", "key",convertKeyDetails))
+	                )
+                );
+
+            // replace the default Link template in the linkTemplateMap
+            myDiagram.linkTemplate =
+                GoMarker(go.Link,  // the whole link panel
+                    {curve: go.Link.Bezier, toShortLength: 2},
+                    GoMarker(go.Shape,  // the link shape
+                        {strokeWidth: 1.5}),
+                    GoMarker(go.Shape,  // the arrowhead
+                        {toArrow: "Standard", stroke: null})
+                );
+
+            // the array of link data objects: the relationships between the nodes
+
+            // create the model and assign it to the Diagram
+            myDiagram.model =
+                GoMarker(go.GraphLinksModel,
+                    { // automatically create node data objects for each "from" or "to" reference
+                        // (set this property before setting the linkDataArray)
+                        archetypeNodeData: {},
+                        // process all of the link relationship data
+                        linkDataArray: linkDataArray
+                    });
+        }
+    </script>
+    <style type="text/css">
+        html,
+        body,
+        .diagram-ctn,
+        .diagram-ctt {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body onload="init()">
+<div id="ctn" class="diagram-ctn">
+    <div id="ctt" class="diagram-ctt"></div>
+</div>
+</body>
+</html>
